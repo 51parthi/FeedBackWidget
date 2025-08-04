@@ -1,1 +1,60 @@
-<p>login works!</p>
+<div class="login-container">
+  <div class="header">
+    <div class="logo">
+      <span>📊</span>
+      <span>Smart Feedback Widget</span>
+    </div>
+    <h1>Welcome Back</h1>
+    <p>Sign in to your account to continue</p>
+  </div>
+
+  <div class="form-container">
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="input-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter your email"
+          required
+          [(ngModel)]="email"
+          name="email"
+        />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter your password"
+          required
+          [(ngModel)]="password"
+          name="password"
+        />
+      </div>
+
+      <div class="options">
+        <div class="remember">
+          <input type="checkbox" id="remember" [(ngModel)]="remember" name="remember" />
+          <label for="remember">Remember me</label>
+        </div>
+        <a href="#" class="forgot-password">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">Log In</button>
+    </form>
+
+    <div class="divider">or continue with</div>
+
+    <div class="social-login">
+      <div class="social-btn"><span>G</span></div>
+      <div class="social-btn"><span>f</span></div>
+      <div class="social-btn"><span>in</span></div>
+    </div>
+
+    <div class="signup-link">
+      Don't have an account? <a href="#">Sign Up</a>
+    </div>
+  </div>
+</div>

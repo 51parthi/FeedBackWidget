@@ -1,1 +1,1291 @@
-<p>admindashborad works!</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFeedback | Next-Gen User Feedback Widget</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #10B981;
+            --accent: #8B5CF6;
+            --dark: #1E293B;
+            --darker: #0F172A;
+            --light: #F1F5F9;
+            --lighter: #F8FAFC;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-hover: rgba(255, 255, 255, 0.15);
+            --glass-shadow: rgba(0, 0, 0, 0.1);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* Background elements */
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+        }
+
+        .bg-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            top: -300px;
+            right: -300px;
+        }
+
+        .bg-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -200px;
+            left: -200px;
+        }
+
+        .bg-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            top: 30%;
+            left: 10%;
+        }
+
+        /* Glass Morphism Effect */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .glass:hover {
+            background: var(--glass-hover);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        nav.scrolled {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 1.2rem 5%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.4rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
+            font-size: 1.05rem;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 0.85rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--accent));
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .cta-button:hover::before {
+            opacity: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.8rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.15;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to right, var(--light), var(--lighter));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.85;
+            max-width: 90%;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .secondary-button {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid var(--glass-border);
+            padding: 0.85rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .secondary-button:hover {
+            background: var(--glass);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .hero-image {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50%;
+            max-width: 700px;
+            z-index: 1;
+            animation: float 8s ease-in-out infinite;
+            filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.3));
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 5%;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to right, var(--light), var(--lighter));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 5rem;
+            opacity: 0.8;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            background: rgba(99, 102, 241, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 1.8rem;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--lighter);
+        }
+
+        .feature-card p {
+            opacity: 0.8;
+            line-height: 1.7;
+        }
+
+        /* Demo Section */
+        .demo {
+            padding: 8rem 5%;
+            text-align: center;
+            position: relative;
+        }
+
+        .widget-container {
+            display: inline-block;
+            width: 380px;
+            height: 480px;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            transform: perspective(1200px) rotateY(-8deg);
+            transition: var(--transition);
+            animation: pulse 4s infinite;
+        }
+
+        .widget-container:hover {
+            transform: perspective(1200px) rotateY(0deg);
+            box-shadow: 0 40px 70px rgba(99, 102, 241, 0.35);
+        }
+
+        .widget-header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            padding: 1.8rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .widget-header h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .widget-body {
+            background: var(--lighter);
+            height: 100%;
+            padding: 2rem;
+            color: var(--dark);
+            text-align: left;
+        }
+
+        .widget-body h4 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--darker);
+        }
+
+        .rating {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+        }
+
+        .rating span {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #EFF2FC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            color: var(--dark);
+            border: 2px solid transparent;
+        }
+
+        .rating span:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            border-color: var(--primary);
+        }
+
+        textarea {
+            width: 100%;
+            height: 130px;
+            border: 1px solid #E2E8F0;
+            border-radius: 14px;
+            padding: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            resize: none;
+            margin: 1.2rem 0;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 8rem 5%;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .testimonial-card {
+            padding: 2.8rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .testimonial-card::after {
+            content: '"';
+            position: absolute;
+            top: 1.5rem;
+            left: 2rem;
+            font-size: 6rem;
+            color: var(--primary);
+            opacity: 0.2;
+            font-family: Georgia, serif;
+            line-height: 1;
+            z-index: -1;
+        }
+
+        .testimonial-content {
+            margin-top: 1rem;
+            font-style: italic;
+            opacity: 0.9;
+            line-height: 1.8;
+            font-size: 1.05rem;
+            z-index: 1;
+        }
+
+        .client {
+            display: flex;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .client-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            margin-right: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .client-info h4 {
+            font-size: 1.2rem;
+            color: var(--lighter);
+        }
+
+        .client-info p {
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 8rem 5%;
+            position: relative;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+        }
+
+        .pricing-card.popular {
+            border: 2px solid var(--primary);
+            transform: scale(1.03);
+            z-index: 2;
+        }
+
+        .pricing-card.popular::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 30px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .pricing-header {
+            margin-bottom: 2rem;
+        }
+
+        .pricing-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--lighter);
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pricing-period {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .pricing-features {
+            margin: 2rem 0;
+            flex-grow: 1;
+        }
+
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .pricing-feature i {
+            color: var(--secondary);
+            margin-right: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .pricing-footer {
+            margin-top: auto;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 8rem 5%;
+            text-align: center;
+        }
+
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: var(--primary);
+            top: -150px;
+            right: -150px;
+            opacity: 0.1;
+            filter: blur(80px);
+            z-index: -1;
+        }
+
+        .cta-box h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--lighter);
+        }
+
+        .cta-box p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.85;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 5% 3rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            text-align: left;
+        }
+
+        .footer-col {
+            flex: 1;
+            padding: 0 1.5rem;
+        }
+
+        .footer-col h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--lighter);
+            font-weight: 600;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--light);
+            text-decoration: none;
+            transition: var(--transition);
+            opacity: 0.8;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            opacity: 1;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--light);
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0.6;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% {
+                transform: translateY(-50%) translateX(0);
+            }
+            50% {
+                transform: translateY(-53%) translateX(15px);
+            }
+            100% {
+                transform: translateY(-50%) translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 25px 50px rgba(99, 102, 241, 0.25);
+            }
+            50% {
+                box-shadow: 0 35px 70px rgba(99, 102, 241, 0.4);
+            }
+            100% {
+                box-shadow: 0 25px 50px rgba(99, 102, 241, 0.25);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.appear {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 8rem;
+                min-height: auto;
+                padding-bottom: 5rem;
+            }
+            
+            .hero-content {
+                margin-bottom: 4rem;
+                max-width: 100%;
+            }
+            
+            .hero-image {
+                position: relative;
+                width: 100%;
+                max-width: 600px;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin: 0 auto;
+            }
+            
+            .hero p {
+                max-width: 100%;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-stats {
+                justify-content: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.6rem;
+            }
+            
+            .section-title {
+                font-size: 2.3rem;
+            }
+            
+            .cta-box {
+                padding: 3rem 2rem;
+            }
+            
+            .cta-box h2 {
+                font-size: 2.2rem;
+            }
+            
+            .widget-container {
+                transform: none;
+                width: 100%;
+                max-width: 380px;
+            }
+            
+            .pricing-card.popular {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .section-subtitle {
+                font-size: 1rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background elements -->
+    <div class="bg-elements">
+        <div class="bg-element bg-1"></div>
+        <div class="bg-element bg-2"></div>
+        <div class="bg-element bg-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="glass fade-in">
+        <div class="logo">
+            <i class="fas fa-comment-dots"></i>
+            SmartFeedback
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#demo">Demo</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#pricing">Pricing</a>
+        </div>
+        <button class="cta-button">Get Started</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content fade-in">
+            <h1>Transform User Feedback Into Actionable Insights</h1>
+            <p>SmartFeedback is the all-in-one solution to collect, analyze, and act on user feedback. Enhance your product experience with our beautiful and intuitive feedback widget.</p>
+            <div class="hero-buttons">
+                <button class="cta-button">Start Free Trial</button>
+                <button class="secondary-button">View Demo</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">Customer Satisfaction</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">4.9/5</div>
+                    <div class="stat-label">Average Rating</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">5K+</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image fade-in">
+            <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#6366F1" />
+                        <stop offset="100%" stop-color="#8B5CF6" />
+                    </linearGradient>
+                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="10" />
+                        <feOffset dx="0" dy="10" result="offsetblur"/>
+                        <feFlood flood-color="rgba(0,0,0,0.2)"/>
+                        <feComposite in2="offsetblur" operator="in"/>
+                        <feMerge>
+                            <feMergeNode/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <rect x="50" y="50" width="700" height="500" rx="30" fill="url(#gradient)" filter="url(#shadow)" />
+                <rect x="80" y="80" width="640" height="100" rx="15" fill="#F8FAFC" />
+                <rect x="80" y="210" width="640" height="300" rx="15" fill="#F8FAFC" />
+                <circle cx="130" cy="130" r="30" fill="#6366F1" />
+                <rect x="180" y="105" width="300" height="20" rx="10" fill="#E2E8F0" />
+                <rect x="180" y="135" width="200" height="15" rx="7.5" fill="#E2E8F0" />
+                <rect x="100" y="240" width="600" height="40" rx="10" fill="#E2E8F0" />
+                <rect x="100" y="300" width="600" height="40" rx="10" fill="#E2E8F0" />
+                <rect x="100" y="360" width="600" height="40" rx="10" fill="#E2E8F0" />
+                <rect x="100" y="420" width="600" height="40" rx="10" fill="#E2E8F0" />
+                <rect x="100" y="480" width="250" height="50" rx="15" fill="#6366F1" />
+                <rect x="380" y="480" width="250" height="50" rx="15" fill="#8B5CF6" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title fade-in">Powerful Features</h2>
+        <p class="section-subtitle fade-in">Everything you need to capture, analyze, and act on user feedback</p>
+        <div class="features-grid">
+            <div class="feature-card glass fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <h3>Beautiful Design</h3>
+                <p>Our widget features a modern, sleek design with customizable themes to match your brand identity perfectly.</p>
+            </div>
+            <div class="feature-card glass fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Lightning Fast</h3>
+                <p>With minimal footprint and optimized performance, our widget loads instantly without affecting your site speed.</p>
+            </div>
+            <div class="feature-card glass fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <h3>Customizable</h3>
+                <p>Adjust every aspect of the widget - from colors to triggers and positioning. Make it truly yours.</p>
+            </div>
+            <div class="feature-card glass fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3>Analytics Dashboard</h3>
+                <p>Gain insights with our powerful analytics dashboard. Track sentiment, trends, and user feedback over time.</p>
+            </div>
+            <div class="feature-card glass fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI-Powered Analysis</h3>
+                <p>Our AI analyzes feedback to detect sentiment, categorize topics, and identify actionable insights.</p>
+            </div>
+            <div class="feature-card glass fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-plug"></i>
+                </div>
+                <h3>Seamless Integrations</h3>
+                <p>Connect with your favorite tools like Slack, Trello, Zendesk, and more to streamline your workflow.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+        <h2 class="section-title fade-in">Interactive Demo</h2>
+        <p class="section-subtitle fade-in">Experience our feedback widget in action</p>
+        <div class="widget-container glass fade-in">
+            <div class="widget-header">
+                <h3>How was your experience?</h3>
+            </div>
+            <div class="widget-body">
+                <h4>Rate your experience with our product</h4>
+                <div class="rating">
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
+                    <span>4</span>
+                    <span>5</span>
+                </div>
+                <h4>Tell us more (optional)</h4>
+                <textarea placeholder="What did you like or dislike?"></textarea>
+                <button class="submit-btn">Submit Feedback</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <h2 class="section-title fade-in">What Our Customers Say</h2>
+        <p class="section-subtitle fade-in">Join thousands of satisfied users worldwide</p>
+        <div class="testimonial-grid">
+            <div class="testimonial-card glass fade-in">
+                <div class="testimonial-content">
+                    "SmartFeedback transformed how we collect user insights. The beautiful widget increased our feedback rate by 230% and the analytics helped us prioritize our roadmap."
+                </div>
+                <div class="client">
+                    <div class="client-avatar">SJ</div>
+                    <div class="client-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>Product Manager, TechCorp</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card glass fade-in">
+                <div class="testimonial-content">
+                    "Implementation took less than 5 minutes. The customization options let us match our brand perfectly. Our users love how unobtrusive yet effective the widget is."
+                </div>
+                <div class="client">
+                    <div class="client-avatar">MR</div>
+                    <div class="client-info">
+                        <h4>Michael Rodriguez</h4>
+                        <p>CTO, StartupX</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card glass fade-in">
+                <div class="testimonial-content">
+                    "The AI analysis features saved us countless hours. Now we can quickly identify common pain points and opportunities without manually reviewing every response."
+                </div>
+                <div class="client">
+                    <div class="client-avatar">ET</div>
+                    <div class="client-info">
+                        <h4>Emma Thompson</h4>
+                        <p>UX Director, InnovateCo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <h2 class="section-title fade-in">Simple, Transparent Pricing</h2>
+        <p class="section-subtitle fade-in">Choose the plan that works best for your team</p>
+        <div class="pricing-grid">
+            <div class="pricing-card glass fade-in">
+                <div class="pricing-header">
+                    <div class="pricing-name">Starter</div>
+                    <div class="pricing-price">$19</div>
+                    <div class="pricing-period">per month</div>
+                </div>
+                <div class="pricing-features">
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Up to 1,000 feedbacks/month</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Basic analytics dashboard</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> 3 widget themes</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Email support</div>
+                </div>
+                <div class="pricing-footer">
+                    <button class="cta-button">Get Started</button>
+                </div>
+            </div>
+            <div class="pricing-card glass popular fade-in">
+                <div class="pricing-header">
+                    <div class="pricing-name">Professional</div>
+                    <div class="pricing-price">$49</div>
+                    <div class="pricing-period">per month</div>
+                </div>
+                <div class="pricing-features">
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Up to 10,000 feedbacks/month</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Advanced analytics</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> AI sentiment analysis</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Unlimited themes</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> 3 integrations</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Priority support</div>
+                </div>
+                <div class="pricing-footer">
+                    <button class="cta-button">Get Started</button>
+                </div>
+            </div>
+            <div class="pricing-card glass fade-in">
+                <div class="pricing-header">
+                    <div class="pricing-name">Enterprise</div>
+                    <div class="pricing-price">$99</div>
+                    <div class="pricing-period">per month</div>
+                </div>
+                <div class="pricing-features">
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Unlimited feedbacks</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Advanced AI analysis</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Custom branding</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Unlimited integrations</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> Dedicated account manager</div>
+                    <div class="pricing-feature"><i class="fas fa-check-circle"></i> 24/7 premium support</div>
+                </div>
+                <div class="pricing-footer">
+                    <button class="cta-button">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-box glass fade-in">
+            <h2>Ready to Elevate Your User Experience?</h2>
+            <p>Join thousands of companies using SmartFeedback to build better products through user insights.</p>
+            <button class="cta-button">Start Free Trial</button>
+            <p style="margin-top: 1.5rem; font-size: 0.95rem; opacity: 0.8;">No credit card required. 14-day free trial.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="logo">
+                    <i class="fas fa-comment-dots"></i>
+                    SmartFeedback
+                </div>
+                <p style="margin-top: 1rem; opacity: 0.8; max-width: 300px;">Transform user feedback into growth with our intuitive feedback collection platform.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <div class="footer-links">
+                    <a href="#features">Features</a>
+                    <a href="#demo">Demo</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#">Integrations</a>
+                    <a href="#">Updates</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <div class="footer-links">
+                    <a href="#">Documentation</a>
+                    <a href="#">Guides</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Community</a>
+                    <a href="#">Support</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <div class="footer-links">
+                    <a href="#">About Us</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Partners</a>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2023 SmartFeedback. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fade-in animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('appear');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(element => {
+                fadeInObserver.observe(element);
+            });
+            
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+            
+            // Demo widget interaction
+            const ratingStars = document.querySelectorAll('.rating span');
+            ratingStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    // Reset all stars
+                    ratingStars.forEach(s => {
+                        s.style.background = '#EFF2FC';
+                        s.style.color = 'var(--dark)';
+                    });
+                    
+                    // Set clicked star and all previous stars to active
+                    const index = Array.from(ratingStars).indexOf(this);
+                    for (let i = 0; i <= index; i++) {
+                        ratingStars[i].style.background = 'var(--primary)';
+                        ratingStars[i].style.color = 'white';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
